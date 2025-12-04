@@ -1,0 +1,1 @@
+- https://redux-toolkit.js.org/introduction/why-rtk-is-redux-today

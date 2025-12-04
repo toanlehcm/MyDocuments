@@ -1,7 +1,6 @@
 # Dưới đây là **roadmap học Redux Toolkit từ Zero → Master** được thiết kế theo từng giai đoạn, kèm checklist, kiến thức cốt lõi, và bài tập thực hành để bạn đi đúng hướng và không bị “tẩu hỏa nhập ma”.
 
 ---
-
 # 🧭 **Roadmap Redux Toolkit: Zero → Master**
 
 ---
