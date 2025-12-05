@@ -12,6 +12,28 @@ Dưới đây là **gói 15–20 prompt hoàn chỉnh bằng tiếng Việt + te
 - Áp dụng ngay vào **project thực tế**, clean code, maintain tốt
 - Tạo ghi chú súc tích, lặp lại → nhớ lâu
 
+🎯 **Summary**
+
+A. Template ghi chú chuẩn hóa (A4) để học nhanh: 
+1. Tóm tắt 5 câu trong 5 gach dau dong. 
+2. Từ khóa quan trọng (10–15 từ)
+3. Core Workflow (gạch đầu dòng)
+4. Hiểu sâu (Concept → Why → How)
+5. Checklist áp dụng thực tế
+6. Ví dụ code tự viết lại
+7. Sai lầm thường gặp
+8. 3 điều quan trọng nhất
+
+B. Tra loi cac cau hoi sau:
+1. Trả lời rõ ràng: Redux hoạt động theo cơ chế nào? Giải thích workflow từ UI → dispatch → reducer → store update → React rerender.
+2. Giải thích kỹ cách React subscribe vào store và khi nào component được rerender.
+3. Hãy tạo 10 câu hỏi tự kiểm tra (kèm đáp án) để tôi đánh giá mình đã hiểu rõ Redux data flow chưa.
+4. Biến kiến thức trong bài thành checklist clean code khi áp dụng Redux/RTK vào dự án lớn.
+5. Liệt kê 10 lỗi developer gặp khi implement Redux data flow + cách tránh.
+6. Giải thích chính xác và ngắn gọn tại sao mỗi dispatch lại khiến component rerender.
+7. Gói gọn bài học theo luật 80/20: chỉ giữ lại 20% kiến thức tạo ra 80% giá trị khi đi làm.
+8. Giải thích tại sao reducer phải là pure function và không được mutate state.
+9. Tạo flowchart step-by-step để debug mọi action dispatch trong Redux.
 ---
 
 # ✅ **A. TEMPLATE NOTEBOOKLM HỌC REDUX / RTK ESSENTIALS**
