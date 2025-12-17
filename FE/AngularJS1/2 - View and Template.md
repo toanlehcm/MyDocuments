@@ -1,22 +1,25 @@
 # 2-View and Template
 
------
+---
+
 t nên đặt câu hỏi ntn để có được đầy đủ kiến thức khi đọc các danh mục trong document của angularJS?
 https://docs.angularjs.org/tutorial/step_02
+
+tra loi cac cau hoi sau:
 nội dung này nói về cái gì?
 t cần nắm được gì sau khi đọc xong?
-
-*Cốt lõi của feature này là gì?*
-*Dùng trong case thực tế nào?*
-*Dùng sai thì lỗi thường gặp là gì?*
-*Có ảnh hưởng performance không?*
-*Khi debug thì nhìn vào đâu?*
+Cốt lõi của feature này là gì?
+Dùng trong case thực tế nào?
+Dùng sai thì lỗi thường gặp là gì?
+Có ảnh hưởng performance không?
+Khi debug thì nhìn vào đâu?
 
 tóm tắt 20% cốt lõi nội dung này để t có thể làm việc trong project thật và giải thích cho người khác dễ hiểu
 trong nội dung này t cần nắm thêm những kiến thức nào mà t chưa hỏi bạn?
-t nên đặt câu hỏi ntn để có được đầy đủ kiến thức trong document này? 
+t nên đặt câu hỏi ntn để kiểm tra đã có được đầy đủ kiến thức trong document này chua?
 VD: tóm tắt 20% cốt lõi để nắm được 80% vận dụng thực tế.
------
+
+---
 
 👉 **AngularJS Tutorial – Step 02** nói về **AngularJS Templates & Data Binding**
 (Link bạn gửi: step_02)
@@ -33,11 +36,11 @@ Mình tóm gọn cho bạn theo đúng kiểu **đọc xong là dùng được t
 
 Cụ thể:
 
-* HTML **không còn là HTML tĩnh**
-* AngularJS cho phép:
+- HTML **không còn là HTML tĩnh**
+- AngularJS cho phép:
 
-  * Gắn **dữ liệu (model)** trực tiếp vào HTML
-  * HTML **tự động cập nhật** khi dữ liệu thay đổi
+  - Gắn **dữ liệu (model)** trực tiếp vào HTML
+  - HTML **tự động cập nhật** khi dữ liệu thay đổi
 
 ---
 
@@ -64,13 +67,13 @@ Ví dụ:
 
 Dữ liệu:
 
-* Từ **JS → HTML**
-* Và **HTML → JS**
+- Từ **JS → HTML**
+- Và **HTML → JS**
 
 Ví dụ:
 
 ```html
-<input ng-model="query">
+<input ng-model="query" />
 <p>{{query}}</p>
 ```
 
@@ -97,9 +100,7 @@ Trong step này bạn thấy các directive quan trọng:
 Ví dụ:
 
 ```html
-<li ng-repeat="phone in phones">
-  {{phone.name}}
-</li>
+<li ng-repeat="phone in phones">{{phone.name}}</li>
 ```
 
 ➡️ Angular tự render list
@@ -134,7 +135,7 @@ Nó phản ứng theo dữ liệu
 ### 🔥 3. `ng-model` tạo liên kết 2 chiều
 
 ```html
-<input ng-model="query">
+<input ng-model="query" />
 ```
 
 ➡️ Gõ → data đổi
@@ -145,15 +146,15 @@ Nó phản ứng theo dữ liệu
 ### 🔥 4. `ng-repeat` = vòng lặp UI
 
 ```html
-<div ng-repeat="item in items">
+<div ng-repeat="item in items"></div>
 ```
 
 ➡️ Rất hay dùng trong project thật:
 
-* List user
-* Table
-* Menu
-* Dropdown
+- List user
+- Table
+- Menu
+- Dropdown
 
 ---
 
@@ -161,13 +162,13 @@ Nó phản ứng theo dữ liệu
 
 Bạn có thể nói như này 👇
 
-> *“Step 02 dạy cách AngularJS biến HTML thành giao diện động bằng data binding.
-> Thay vì viết JS để update DOM, mình chỉ cần bind dữ liệu vào HTML, Angular tự lo phần còn lại.”*
+> _“Step 02 dạy cách AngularJS biến HTML thành giao diện động bằng data binding.
+> Thay vì viết JS để update DOM, mình chỉ cần bind dữ liệu vào HTML, Angular tự lo phần còn lại.”_
 
 Hoặc ví dụ đời thường:
 
-> *“Angular giống như Google Sheets:
-> bạn đổi dữ liệu ở 1 ô → mọi chỗ liên quan tự cập nhật.”*
+> _“Angular giống như Google Sheets:
+> bạn đổi dữ liệu ở 1 ô → mọi chỗ liên quan tự cập nhật.”_
 
 ---
 
@@ -175,17 +176,17 @@ Hoặc ví dụ đời thường:
 
 Trong project AngularJS thật:
 
-* 90% code UI là:
+- 90% code UI là:
 
-  * `ng-repeat`
-  * `ng-model`
-  * `{{ }}`
+  - `ng-repeat`
+  - `ng-model`
+  - `{{ }}`
 
 Nếu **chưa hiểu Step 02** 👉
 
-* Code khó debug
-* Không hiểu vì sao UI tự đổi
-* Dễ quay về dùng jQuery sai cách
+- Code khó debug
+- Không hiểu vì sao UI tự đổi
+- Dễ quay về dùng jQuery sai cách
 
 ---
 
@@ -213,14 +214,14 @@ Ngoài **data binding, ng-repeat, ng-model**, bạn **cần nắm thêm 5 ý sau
 
 Trong tutorial:
 
-* Không có `document.getElementById`
-* Không có `innerHTML`
-* Không có jQuery update UI
+- Không có `document.getElementById`
+- Không có `innerHTML`
+- Không có jQuery update UI
 
 👉 AngularJS dùng:
 
-* **Model → View**
-* UI tự render lại
+- **Model → View**
+- UI tự render lại
 
 💡 Khi đi làm:
 
@@ -229,8 +230,8 @@ Trong tutorial:
 
 👉 Đây là nền tảng để:
 
-* Debug dễ
-* Code maintain được
+- Debug dễ
+- Code maintain được
 
 ---
 
@@ -248,16 +249,16 @@ Ví dụ:
 
 ❌ Không dùng được:
 
-* `if`
-* `for`
-* `window`
-* `document`
+- `if`
+- `for`
+- `window`
+- `document`
 
 ✔️ Dùng được:
 
-* toán tử
-* filter
-* property access
+- toán tử
+- filter
+- property access
 
 💡 Khi đọc doc, phải tự hỏi:
 
@@ -277,13 +278,13 @@ $scope.phones = [...]
 
 📌 Bạn cần tự nhận ra:
 
-* `$scope` = nơi Angular **lưu data cho View**
-* HTML chỉ thấy được những gì nằm trong scope
+- `$scope` = nơi Angular **lưu data cho View**
+- HTML chỉ thấy được những gì nằm trong scope
 
 💡 Nếu không hiểu scope:
 
-* Không hiểu vì sao `{{variable}}` không hiển thị
-* Không debug được binding lỗi
+- Không hiểu vì sao `{{variable}}` không hiển thị
+- Không debug được binding lỗi
 
 ---
 
@@ -298,7 +299,7 @@ Step 02 ngầm cho bạn thấy flow này:
 
 💡 Khi gặp lỗi:
 
-* `{{ }}` hiện nguyên text
+- `{{ }}` hiện nguyên text
   → 90% là Angular **chưa bootstrap**
 
 ---
@@ -308,15 +309,15 @@ Step 02 ngầm cho bạn thấy flow này:
 AngularJS cho phép:
 
 ```html
-<li ng-repeat="phone in phones | filter:query">
+<li ng-repeat="phone in phones | filter:query"></li>
 ```
 
 👉 Logic **nằm trong HTML**
 
 Điều này:
 
-* ❌ Tốt cho project nhỏ
-* ⚠️ Nguy hiểm cho project lớn nếu lạm dụng
+- ❌ Tốt cho project nhỏ
+- ⚠️ Nguy hiểm cho project lớn nếu lạm dụng
 
 💡 Step 02 là lần đầu bạn thấy:
 
@@ -399,11 +400,11 @@ Không có scope → không có binding
 
 Khi đọc **bất kỳ danh mục nào trong AngularJS docs**, hãy hỏi:
 
-> 🔹 *Cốt lõi của feature này là gì?*
-> 🔹 *Dùng trong case thực tế nào?*
-> 🔹 *Dùng sai thì lỗi thường gặp là gì?*
-> 🔹 *Có ảnh hưởng performance không?*
-> 🔹 *Khi debug thì nhìn vào đâu?*
+> 🔹 _Cốt lõi của feature này là gì?_
+> 🔹 _Dùng trong case thực tế nào?_
+> 🔹 _Dùng sai thì lỗi thường gặp là gì?_
+> 🔹 _Có ảnh hưởng performance không?_
+> 🔹 _Khi debug thì nhìn vào đâu?_
 
 ---
 
