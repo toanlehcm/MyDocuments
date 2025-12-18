@@ -1,9 +1,8 @@
-# 2-View and Template
+# [2-View and Template](https://docs.angularjs.org/tutorial/step_02)
 
 ---
 
 t nên đặt câu hỏi ntn để có được đầy đủ kiến thức khi đọc các danh mục trong document của angularJS?
-https://docs.angularjs.org/tutorial/step_02
 
 tra loi cac cau hoi sau:
 nội dung này nói về cái gì?
