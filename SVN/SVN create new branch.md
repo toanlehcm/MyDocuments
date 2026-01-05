@@ -19,19 +19,22 @@ Ví dụ:
 • **Create copy in the repository** → tick chọn
 • Message (optional)
 
-**3. Nhấn OK → Branch sẽ được tạo trong SVN Repository
-🔍 TortoiseSVN thực chất chạy lệnh:**
+\*\*3. Nhấn OK → Branch sẽ được tạo trong SVN Repository
+
+🔍 TortoiseSVN thực chất chạy lệnh:\*\*
 
 `svn copy ^/trunk ^/branches/feature-8924 -m "Create feature-8924 branch"`
 
 **🌱 Sau khi tạo branch → switch để làm việc trên branch mới**
-Chuột phải Working Copy →
-**TortoiseSVN → Switch…**
+
+Chuột phải Working Copy → **TortoiseSVN → Switch…**
 
 Chọn URL của branch mới → OK.
-**📌 Tóm tắt các thao tác tương ứng trong SVN**Mục tiêuTortoiseSVNLệnh 
+
+**📌 Tóm tắt các thao tác tương ứng trong SVN**Mục tiêuTortoiseSVNLệnh
 
 **Nếu bạn cần mình có thể hướng dẫn thêm:**
+
 ✔ Làm sao để tạo **branch từ một revision cụ thể**
 
 ✔ Cách **revert toàn bộ thay đổi** an toàn
@@ -40,10 +43,10 @@ Chọn URL của branch mới → OK.
 
 ✔ Hoặc setup VSCode để xem SVN changes.
 
-| Mục tiêu | TortoiseSVN | Lệnh SVN |
-| --- | --- | --- |
-| Checkout | Checkout | `svn checkout` |
-| Đổi branch | Switch | `svn switch` |
-| Tạo branch mới | Branch/Tag | `svn copy` |
-| Commit | Commit | `svn commit` |
-| Update | Update | `svn update` |
+| Mục tiêu       | TortoiseSVN | Lệnh SVN       |
+| -------------- | ----------- | -------------- |
+| Checkout       | Checkout    | `svn checkout` |
+| Đổi branch     | Switch      | `svn switch`   |
+| Tạo branch mới | Branch/Tag  | `svn copy`     |
+| Commit         | Commit      | `svn commit`   |
+| Update         | Update      | `svn update`   |
