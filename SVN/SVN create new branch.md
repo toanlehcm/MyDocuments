@@ -19,7 +19,7 @@ Ví dụ:
 • **Create copy in the repository** → tick chọn
 • Message (optional)
 
-\*\*3. Nhấn OK → Branch sẽ được tạo trong SVN Repository
+3. Nhấn OK → Branch sẽ được tạo trong SVN Repository
 
 🔍 TortoiseSVN thực chất chạy lệnh:\*\*
 
@@ -31,7 +31,9 @@ Chuột phải Working Copy → **TortoiseSVN → Switch…**
 
 Chọn URL của branch mới → OK.
 
-**📌 Tóm tắt các thao tác tương ứng trong SVN**Mục tiêuTortoiseSVNLệnh
+**📌 Tóm tắt các thao tác tương ứng trong SVN**
+
+Mục tiêuTortoiseSVNLệnh
 
 **Nếu bạn cần mình có thể hướng dẫn thêm:**
 
