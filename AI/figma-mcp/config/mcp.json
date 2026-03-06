@@ -1,0 +1,30 @@
+// {
+//   "servers": {
+//     "figma-local": {
+//       "command": "npx",
+//       "args": ["-y", "@figma/mcp-server"],
+//       "env": {
+//         "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
+//       }
+//     }
+//   }
+// }
+{
+  "servers": {
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@figma/mcp-server"
+      ],
+      // "headers": {
+      //   "Authorization": "${FIGMA_ACCESS_TOKEN}"
+      // }
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
+      }
+    }
+  }
+}
