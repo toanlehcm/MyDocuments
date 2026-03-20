@@ -15,6 +15,7 @@ Những file này (như `environment.js` hay `pteverywhere.js`) **cần có mặ
 ```bash
 git update-index --skip-worktree Client/app/index.html
 git update-index --skip-worktree Client/app/scripts/config/environment.js
+git update-index --skip-worktree Client/app/cordova-android
 git update-index --skip-worktree Server/package-lock.json
 git update-index --skip-worktree Server/config/pteverywhere.js
 git update-index --skip-worktree Server/lib/util/pdfUtil.js
