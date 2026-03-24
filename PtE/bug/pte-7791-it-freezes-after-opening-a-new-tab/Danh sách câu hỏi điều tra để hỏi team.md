@@ -5,8 +5,8 @@
 ### 🔍 Câu hỏi điều tra bug "Màn che / Đơ sau khi View Associated Tasks"
 
 **📅 Timeline & Tần suất:**
-1. Bug này xuất hiện từ khi nào? (sau release nào?)
-2. Tần suất xảy ra là bao nhiêu? (1/10 lần click? 1/50?): hiếm khi
+1. Bug này xuất hiện từ khi nào? (sau release nào?): năm ngoái
+2. Tần suất xảy ra là bao nhiêu? (1/10 lần click? 1/50?): hiếm khi, lúc bị lúc không ông
 3. Bug xảy ra tất cả mọi người hay chỉ một số user cụ thể?: nửa team.
 
 **📍 Xác định vị trí bug:**
