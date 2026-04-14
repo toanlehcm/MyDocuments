@@ -20,8 +20,18 @@ Tương tự như các từ trước, chúng ta sẽ dùng công thức: **Hành
 > *(Nó có nghĩa là dựa dẫm vào các chất có hại, như ma túy hoặc rượu mạnh, để đối phó với nỗi đau tinh thần hoặc các vấn đề khó khăn.)*
 
 **3. Đưa ra ví dụ thực tế (Cách tốt nhất để người nghe hiểu ngay)**
-> "For example, after a very traumatic event, some people **lean on substance abuse** to escape their reality."
-> *(Ví dụ, sau một sự kiện vô cùng chấn động, một số người tìm đến lạm dụng chất kích thích để trốn tránh thực tại của họ.)*
+
+English:
+
+"For example, after a very traumatic event, some people **lean on substance abuse** to escape their reality."
+
+IPA:
+
+/fɔr ɪgˈzæmpəl, ˈæf.tər ə ˈvɛr.i trɔˈmæt.ɪk ɪˈvɛnt, sʌm ˈpi.pəl lin ɑn ˈsʌb.stəns əˈbjus tu ɪˈskeɪp ðɛr riˈæl.ə.ti./
+
+Vietnamese:
+
+"Ví dụ, sau một sự kiện vô cùng chấn động (gây sang chấn), một số người dựa dẫm vào lạm dụng chất kích thích để trốn tránh thực tại của họ."
 
 ---
 

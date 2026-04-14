@@ -17,8 +17,18 @@ Chúng ta sẽ dùng công thức: **Vấn đề/mối lo ngại + Cảm giác l
 > *(Nếu một thứ gì đó lơ lửng trên đầu bạn, nó có nghĩa là bạn đang liên tục lo lắng về một vấn đề chưa được giải quyết hoặc một sự kiện tồi tệ có thể sớm xảy ra.)*
 
 **3. Đưa ra ví dụ thực tế (Cách tốt nhất để người nghe hiểu ngay)**
-> "For example, if you have a huge debt that you haven't paid, that problem is **hanging over your head** every day."
-> *(Ví dụ, nếu bạn có một khoản nợ khổng lồ chưa trả, vấn đề đó sẽ ám ảnh (lơ lửng trên đầu) bạn mỗi ngày.)*
+
+English:
+
+"For example, if you have a huge debt that you haven't paid, that problem is **hanging over your head** every day."
+
+IPA:
+
+/fɔr ɪgˈzæmpəl, ɪf ju hæv ə hjudʒ dɛt ðæt ju ˈhæv.ənt peɪd, ðæt ˈprɑb.ləm ɪz ˈhæŋ.ɪŋ ˈoʊ.vər jʊr hɛd ˈɛv.ri deɪ./
+
+Vietnamese:
+
+"Ví dụ, nếu bạn có một khoản nợ khổng lồ chưa trả, vấn đề đó sẽ lơ lửng trên đầu (ám ảnh) bạn mỗi ngày."
 
 ---
 
