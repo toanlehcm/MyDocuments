@@ -1,6 +1,7 @@
-1.nghĩa chính xác của từ ... là gì?
-2.hướng dẫn t giải thích bằng tiếng Anh dễ hiểu
-3.Format các câu vd khi giải thích nên có 3 versions:
+1.cho từ loại, IPA của các từ trên là gì?
+2.nghĩa tiếng việt chính xác.
+3.hướng dẫn t giải thích bằng tiếng Anh dễ hiểu
+4.Format các câu vd khi giải thích nên có 3 versions:
 VD Format:
 **1. Cách giải thích đơn giản nhất (Dành cho giao tiếp hàng ngày)**
 > English version
