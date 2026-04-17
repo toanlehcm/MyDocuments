@@ -1,5 +1,6 @@
 ---
 description: 🔁 Retrospective bug/task vừa done - Đúc kết kiến thức FE/BE
+version: 1.1.0
 ---
 
 # WORKFLOW: /retrospective - The Knowledge Extractor
@@ -39,7 +40,7 @@ AI phải tự thu thập thông tin từ:
 Tạo thư mục: `d:\Sources\MyDocuments\PtE\retro\[BUG-ID]-[tên-ngắn]\`  
 (Hoặc vị trí tương tự trong workspace)
 
-Tạo 4 files:
+Tạo **5 files** (4 files học tập + 1 file session memory cho AI):
 
 ---
 
@@ -197,12 +198,132 @@ Ví dụ: "File này như một 'bưu tá' — nhận yêu cầu, phân loại, 
 
 ---
 
+### 📄 File 5: `session-ticket-[mã-ticket].md`
+**Mục đích:** Lưu toàn bộ thông tin kỹ thuật của ticket để AI đọc lại và khôi phục context nhanh trong session mới — giải quyết vấn đề **mất session do giới hạn token**.
+
+> **Nguyên tắc:** File này là "bộ nhớ ngoài" của AI. Khi session cũ bị xóa, AI chỉ cần đọc file này để hiểu ngay toàn bộ ticket mà không cần hỏi lại user.
+
+```markdown
+# Session Memory — [Bug ID]: [Tên bug]
+
+> 🤖 **Dành cho AI Agent đọc khi restore context.**  
+> User chỉ cần nói: "Đọc file session-ticket-[ID].md và nhớ lại context bug này."
+
+---
+
+## 📋 TICKET INFO
+- **Ticket ID:** [ID]
+- **Type:** Bug / Task / Feature
+- **Title:** [Tiêu đề đầy đủ]
+- **Status:** Done / In Progress
+- **Reporter:** [Tên người báo]
+- **Assignee:** [Tên người fix]
+- **Date fixed:** [Ngày]
+
+---
+
+## 🐛 STEPS TO REPRODUCE
+1. [Bước 1]
+2. [Bước 2]
+3. [Bước 3 — điểm xảy ra bug]
+
+**Expected:** [Kết quả mong đợi]
+**Actual:** [Kết quả thực tế bị sai]
+
+---
+
+## 🔍 ROOT CAUSE
+[Giải thích nguyên nhân kỹ thuật gốc rễ — đủ chi tiết để AI hiểu ngay mà không cần đọc code]
+
+---
+
+## ✅ SOLUTION
+[Giải pháp đã áp dụng — mô tả logic thay đổi, công thức, pattern]
+
+---
+
+## 📁 FILES ĐÃ SỬA (Fixed Files)
+
+| File | Đường dẫn đầy đủ | Vai trò | Thay đổi gì |
+|------|------------------|---------|-------------|
+| [Tên file] | [path] | [Generator/Validator/Controller/...] | [Mô tả thay đổi ngắn] |
+
+### Chi tiết từng file:
+
+#### [Tên file 1]
+- **Function bị ảnh hưởng:** `[tên function()]` — dòng [X]–[Y]
+- **Logic cũ (sai):**
+```javascript
+[code cũ quan trọng]
+```
+- **Logic mới (đúng):**
+```javascript
+[code mới đã fix]
+```
+
+---
+
+## 📁 FILES LIÊN QUAN (Related Files — không sửa nhưng cùng workflow)
+
+| File | Đường dẫn | Vai trò trong workflow | Lý do liên quan |
+|------|-----------|------------------------|-----------------|
+| [Tên file] | [path] | [Mô tả vai trò] | [Tại sao liên quan đến bug này] |
+
+---
+
+## 🗄️ MONGODB — Collections & Queries liên quan
+
+| Collection | Mục đích | Fields quan trọng | Query pattern |
+|------------|----------|-------------------|---------------|
+| [tên collection] | [làm gì] | [field1, field2] | [find/aggregate pattern] |
+
+**Sample query đã dùng khi debug:**
+```javascript
+// [Mô tả query này làm gì]
+db.[collection].find({ [filter] }).lean()
+```
+
+---
+
+## 📦 THƯ VIỆN / DEPENDENCIES liên quan
+
+| Library | Version | Dùng để làm gì | Gotcha cần nhớ |
+|---------|---------|----------------|----------------|
+| [moment-timezone] | [2.x] | [Tính ngày theo timezone] | [.tz() phải gọi trước khi tính ngày] |
+
+---
+
+## 🧭 WORKFLOW (Luồng dữ liệu của ticket này)
+
+```
+[Entry point] → [Function A] → [Function B] → [Function C] → [Output]
+                                    ↓
+                          [Chỗ bug nằm ở đây]
+                          [Đã fix: mô tả ngắn]
+```
+
+---
+
+## ⚠️ SIDE EFFECTS & RISKS
+- [Điều cần lưu ý nếu có ticket tương tự sau này]
+- [Những chỗ code khác có thể bị ảnh hưởng nhưng chưa kiểm tra]
+
+---
+
+## 🔗 LIÊN KẾT
+- **Full knowledge:** `03-full-knowledge.md`
+- **Code reading guide:** `04-code-reading-guide.md`
+- **Interview prep:** `02-interview-version.md`
+```
+
+---
+
 ## 🔄 QUY TRÌNH THỰC HIỆN
 
 ```
 1. AI đọc session context (files đã xem, code đã sửa)
 2. AI tạo thư mục retro/[BUG-ID]/
-3. AI viết 4 files song song
+3. AI viết 5 files (ưu tiên session-ticket trước để không mất data)
 4. AI in ra preview ngắn từng file cho user xem
 5. AI lưu vào brain.json (knowledge_items → gotchas)
 6. AI thông báo xong
@@ -215,16 +336,18 @@ Ví dụ: "File này như một 'bưu tá' — nhận yêu cầu, phân loại, 
 ```
 ✅ RETROSPECTIVE DONE — [Bug ID]
 
-📁 Đã tạo 4 files tại: retro/[BUG-ID]-[tên]/
+📁 Đã tạo 5 files tại: retro/[BUG-ID]-[tên]/
 
-📄 01-cv-version.md       → Dùng cho CV/LinkedIn
-📄 02-interview-version.md → Dùng khi phỏng vấn
-📄 03-full-knowledge.md    → Đọc để hiểu sâu
+📄 session-ticket-[ID].md   → 🤖 AI context restore (đọc file này để nhớ lại ticket)
+📄 01-cv-version.md         → Dùng cho CV/LinkedIn
+📄 02-interview-version.md  → Dùng khi phỏng vấn
+📄 03-full-knowledge.md     → Đọc để hiểu sâu
 📄 04-code-reading-guide.md → Hướng dẫn đọc code nhanh
 
 🧠 Đã lưu vào brain (gotchas + patterns)
 
-💡 Gợi ý: Đọc lại 02-interview-version.md trước khi phỏng vấn!
+💡 Tip: Khi bắt đầu session mới về ticket này, nói:
+   "Đọc file session-ticket-[ID].md và nhớ lại context."
 ```
 
 ---
