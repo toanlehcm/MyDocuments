@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "schema_version": "1.1.0",
+    "awf_version": "3.3.0",
+    "sync_strategy": "git_synced"
+  },
+  "project": {
+    "name": "AI Agent Mastery Roadmap",
+    "type": "Educational/Learning",
+    "status": "Active",
+    "description": "Lộ trình 1 năm làm chủ AI Agent từ nền tảng Prompt Engineering."
+  },
+  "learning_state": {
+    "current_phase": "Giai đoạn 1: Nền tảng & Tư duy",
+    "completed_topics": [
+      "Common Terminology",
+      "Model Weights & Parameters"
+    ],
+    "artifacts_maintained": [
+      "ROADMAP_PROGRESS.md",
+      "EXPLAIN_FOR_DEVS.md"
+    ]
+  },
+  "knowledge_base": {
+    "terminology": [
+      {
+        "term": "LLM",
+        "mapping": "Core Engine / Next word predictor",
+        "description": "Mô hình ngôn ngữ lớn, đoán từ tiếp theo dựa trên xác suất."
+      },
+      {
+        "term": "Tokens",
+        "mapping": "Unit of cost / Fragments of text",
+        "description": "Đơn vị tính toán và tính tiền của AI, không phải JWT token."
+      },
+      {
+        "term": "Context Window",
+        "mapping": "RAM / Application State",
+        "description": "Giới hạn dung lượng text mà AI có thể xử lý trong một lần gọi API."
+      },
+      {
+        "term": "Hallucination",
+        "mapping": "Confident 200 OK with fake data",
+        "description": "AI bịa đặt thông tin một cách tự tin."
+      },
+      {
+        "term": "Agents",
+        "mapping": "LLM + Tools + Planning",
+        "description": "Hệ thống có khả năng tự thực thi lệnh và dùng công cụ."
+      },
+      {
+        "term": "Prompt Injection",
+        "mapping": "SQL Injection / XSS for AI",
+        "description": "Chèn lệnh tự nhiên để lừa AI làm trái chỉ thị."
+      },
+      {
+        "term": "RAG",
+        "mapping": "Retrieval (DB Search) + Generation (Prompt Context)",
+        "description": "Kỹ thuật truy xuất dữ liệu ngoại vi để bổ trợ câu trả lời."
+      }
+    ],
+    "concepts": [
+      {
+        "name": "Parameters (Tham số)",
+        "mapping": "Bảng tra cứu xác suất khổng lồ",
+        "description": "Tổng số lượng mối liên kết (biến số) mà AI lưu trữ. Càng nhiều càng thông minh."
+      },
+      {
+        "name": "Weights (Trọng số)",
+        "mapping": "Giá trị phần trăm mối liên kết",
+        "description": "Xác suất một từ khóa/pattern đi kèm với từ khóa khác."
+      }
+    ]
+  }
+}
