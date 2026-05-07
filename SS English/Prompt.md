@@ -1,7 +1,10 @@
 1.cho từ loại, IPA của các từ trên là gì?
 2.nghĩa tiếng việt chính xác.
 3.hướng dẫn t giải thích bằng tiếng Anh dễ hiểu
-4.t muốn mỗi từ là 1 file md có thể download về máy tính cá nhân/trong folder MyDocuments/SS English/phase-7/skill-7-behind-the-wheel. VD: Không đặt tên file là vocabulary-gambling, chỉ cần đặt tên file là Gambling.md
+4.t muốn mỗi từ là 1 file md 
+có thể download về máy tính cá nhân/
+trong folder MyDocuments/SS English/phase-7/skill-7-behind-the-wheel. 
+VD: Không đặt tên file là vocabulary-gambling, chỉ cần đặt tên file là Gambling.md
 5.Format các câu vd khi giải thích nên có 3 versions:
 VD Format:
 **1. Cách giải thích đơn giản nhất (Dành cho giao tiếp hàng ngày)**
