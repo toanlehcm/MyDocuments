@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đồ họa thông tin: Kiến trúc Hexagonal (Ports & Adapters)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .interactive-block {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .interactive-block:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Interactive States */
+        .layer-core { border-color: #6366F1; background-color: #EEF2FF; }
+        .layer-port { border-color: #14B8A6; background-color: #F0FDFA; }
+        .layer-adapter { border-color: #F59E0B; background-color: #FFFBEB; }
+
+        .active-core { background-color: #6366F1; color: white !important; }
+        .active-core * { color: white !important; }
+        
+        .active-port { background-color: #14B8A6; color: white !important; }
+        .active-port * { color: white !important; }
+
+        .active-adapter { background-color: #F59E0B; color: white !important; }
+        .active-adapter * { color: white !important; }
+    </style>
+</head>
+<body class="antialiased pb-20">
+
+    <!-- Chosen Palette: Modern Tech (Slate bg, Indigo Core, Teal Ports, Amber Adapters) -->
+    
+    <!-- Application Structure Plan: 
+    1. Header: Introduces Hexagonal Architecture (Ports & Adapters).
+    2. Interactive Diagram (Core): A layout mimicking a hexagon using nested divs. Core in center, surrounded by Ports boundary, flanked by Primary/Secondary Adapters. Clicking updates the info panel.
+    3. Info Panel: Dynamic text explaining the clicked concept with unified code analogies (E-commerce Place Order scenario).
+    4. Data Flow / Real-world Scenario: Step-by-step example of switching from MySQL to MongoDB (User's specific goal).
+    5. Application/Use Case: Radar chart comparing Hexagonal to Traditional MVC, alongside "When to use" bullet points.
+    -->
+
+    <!-- Visualization & Content Choices: 
+    - Architecture Diagram: Goal: Organize. Method: HTML/CSS Flexbox with nested borders to represent boundaries. JS interaction to highlight and explain. Justification: Avoids SVG while clearly showing the "inside vs outside" concept of Hexagonal.
+    - Database Swap Flow: Goal: Change/Process. Method: Styled HTML List/Grid with Unicode arrows. Justification: Clearly visualizes the decoupling benefit without complex charts.
+    - Architecture Evaluation Chart: Goal: Inform/Compare. Method: Chart.js Radar Chart (Canvas). Justification: Perfect for comparing multi-variable attributes (Testability, DB Independence, Complexity) between two architectural styles.
+    - CONFIRMING NO SVG OR MERMAID USED.
+    -->
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+        
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Kiến Trúc <span class="text-indigo-600">Ports & Adapters</span></h1>
+            <p class="text-xl text-slate-600 font-medium mb-2">(Kiến trúc Hexagonal / Lục giác)</p>
+            <p class="mt-4 max-w-3xl mx-auto text-slate-500 leading-relaxed">
+                Giải pháp bảo vệ <b>Logic nghiệp vụ cốt lõi</b> bằng cách giao tiếp với các công cụ bên ngoài (UI, Database, API) thông qua các <b>Cổng (Ports)</b> và <b>Bộ chuyển đổi (Adapters)</b>. Framework hay Database chỉ là "plug-in" có thể tháo lắp dễ dàng.
+            </p>
+        </header>
+
+        <!-- 1. Interactive Diagram Section -->
+        <section class="mb-20">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl font-bold text-slate-800">1. Mô hình hoạt động (Cấu trúc Lõi - Cổng - Chuyển đổi)</h2>
+                <p class="text-slate-500 mt-2">Nhấp vào từng khu vực để xem kịch bản thực tế: <b class="text-indigo-600">"Khách hàng Đặt Đơn Hàng"</b></p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10">
+                
+                <div class="flex flex-col lg:flex-row items-stretch justify-center gap-6 mb-12">
+                    
+                    <!-- Primary Adapters -->
+                    <div id="btn-primary" class="interactive-block layer-adapter w-full lg:w-1/4 rounded-2xl border-4 p-6 flex flex-col items-center justify-center text-center" onclick="showDetails('primary')">
+                        <div class="text-4xl mb-3">📱</div>
+                        <h3 class="font-bold text-amber-700 text-lg">Primary Adapters</h3>
+                        <p class="text-sm text-amber-600 font-medium mt-1">(Bộ chuyển đổi Chủ động)</p>
+                        <div class="mt-4 text-xs text-amber-800 bg-amber-100/50 p-2 rounded-lg w-full">
+                            Web UI, REST API, CLI...
+                        </div>
+                    </div>
+
+                    <!-- Ports & Core (The Hexagon Concept) -->
+                    <div id="btn-port" class="interactive-block layer-port w-full lg:w-1/2 relative rounded-3xl border-4 p-4 lg:p-8 flex flex-col justify-center transition-colors" onclick="showDetails('port')">
+                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -mt-4 bg-white px-4">
+                            <span class="font-bold text-teal-600 uppercase tracking-widest text-sm border-2 border-teal-200 bg-teal-50 py-1 px-3 rounded-full">Ports (Interfaces)</span>
+                        </div>
+                        
+                        <!-- Core Inside Ports -->
+                        <div id="btn-core" class="interactive-block layer-core w-full rounded-2xl border-4 p-8 text-center mt-4 shadow-inner" onclick="showDetails('core'); event.stopPropagation();">
+                            <div class="text-5xl mb-4">🧠</div>
+                            <h3 class="font-extrabold text-indigo-700 text-2xl">Application Core</h3>
+                            <p class="text-indigo-600 font-medium mt-2">Business Logic & Domain</p>
+                            <div class="mt-4 text-sm text-indigo-800 bg-indigo-100/50 p-2 rounded-lg inline-block">
+                                Hoàn toàn KHÔNG phụ thuộc vào bên ngoài
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Adapters -->
+                    <div id="btn-secondary" class="interactive-block layer-adapter w-full lg:w-1/4 rounded-2xl border-4 p-6 flex flex-col items-center justify-center text-center" onclick="showDetails('secondary')">
+                        <div class="text-4xl mb-3">🗄️</div>
+                        <h3 class="font-bold text-amber-700 text-lg">Secondary Adapters</h3>
+                        <p class="text-sm text-amber-600 font-medium mt-1">(Bộ chuyển đổi Bị động)</p>
+                        <div class="mt-4 text-xs text-amber-800 bg-amber-100/50 p-2 rounded-lg w-full">
+                            MySQL, MongoDB, Email API...
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Dynamic Info Panel -->
+                <div id="info-panel" class="bg-slate-50 rounded-2xl p-6 md:p-8 min-h-[180px] border border-slate-200 transition-all duration-300">
+                    <div class="text-center text-slate-500 italic mt-10">
+                        👆 Nhấp vào các khối màu bên trên để xem giải thích chi tiết và luồng code liên kết.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Real-world Scenario: Swapping DB -->
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-slate-800 text-center mb-8">2. Tình huống thực tế: Đổi Database không chạm vào Logic</h2>
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 max-w-4xl mx-auto">
+                <p class="text-slate-600 mb-8 text-center text-lg">
+                    Yêu cầu: Hệ thống đang dùng <b>MySQL</b>, giờ muốn chuyển sang <b>MongoDB</b> hoặc <b>PostgreSQL</b>.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    
+                    <!-- Lõi quy định quy tắc (Port) -->
+                    <div class="bg-teal-50 border border-teal-200 p-6 rounded-2xl text-center h-full flex flex-col justify-center">
+                        <h4 class="font-bold text-teal-800 mb-2">1. Định nghĩa Port (Trong Lõi)</h4>
+                        <p class="text-sm text-teal-600 mb-4">Lõi chỉ định nghĩa ra một "Ổ cắm" (Interface) yêu cầu phải có hàm lưu dữ liệu, không quan tâm lưu ở đâu.</p>
+                        <div class="bg-teal-900 text-teal-100 text-xs text-left p-3 rounded-lg font-mono">
+                            interface IOrderRepository {<br>
+                            &nbsp;&nbsp;save(order: Order): void;<br>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="hidden md:flex justify-center text-3xl text-slate-300 font-bold">🔌</div>
+                    <div class="md:hidden flex justify-center text-3xl text-slate-300 font-bold my-2">🔗</div>
+
+                    <!-- Các Adapter cắm vào (Adapters) -->
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-amber-800 text-sm">Adapter Cũ (MySQL)</h4>
+                                <p class="text-xs text-amber-600">implements IOrderRepository</p>
+                            </div>
+                            <span class="text-2xl">🐘</span>
+                        </div>
+                        
+                        <div class="text-center text-slate-400 font-bold text-sm">CHUYỂN ĐỔI DỄ DÀNG ⬇️</div>
+                        
+                        <div class="bg-amber-100 border-2 border-amber-400 p-4 rounded-xl shadow-md flex items-center justify-between relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
+                            <div class="pl-2">
+                                <h4 class="font-bold text-amber-900 text-sm">Adapter Mới (MongoDB)</h4>
+                                <p class="text-xs text-amber-700">implements IOrderRepository</p>
+                            </div>
+                            <span class="text-2xl">🍃</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                    <p class="text-indigo-800 text-sm">
+                        <b>Kết quả:</b> Bạn chỉ cần tạo ra file <code>MongoOrderRepository</code> mới chuẩn hóa theo <code>IOrderRepository</code> và "cắm" nó vào hệ thống lúc khởi chạy. Lõi ứng dụng (Application Core) <b>không thay đổi dù chỉ 1 dòng code</b>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Evaluation & When to use -->
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-slate-800 text-center mb-8">3. Khi nào cần áp dụng trong Project?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Đánh giá so sánh</h3>
+                    <p class="text-sm text-slate-500 mb-6">Hexagonal (Ports & Adapters) vs Layered MVC truyền thống</p>
+                    <div class="chart-container flex-grow">
+                        <canvas id="architectureRadarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div class="bg-teal-50 rounded-3xl border border-teal-200 p-6 flex-1">
+                        <h3 class="font-bold text-teal-800 text-lg mb-4 flex items-center">
+                            <span class="bg-teal-200 p-2 rounded-full mr-3 text-xl">🎯</span> NÊN ÁP DỤNG KHI:
+                        </h3>
+                        <ul class="space-y-4 text-sm text-teal-900">
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-0.5 text-teal-500">✔️</span>
+                                <span><b>Dự án dài hạn, thay đổi liên tục:</b> Hệ thống cần sống sót qua nhiều thế hệ công nghệ (đổi framework frontend, đổi DB, tích hợp API mới liên tục).</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-0.5 text-teal-500">✔️</span>
+                                <span><b>Domain Logic phức tạp:</b> Quy tắc tính toán, nghiệp vụ cốt lõi quá quan trọng và rắc rối, cần được cô lập tuyệt đối để dễ hiểu và không bị tác động bởi UI.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="mr-2 mt-0.5 text-teal-500">✔️</span>
+                                <span><b>Yêu cầu Unit Test nghiêm ngặt:</b> Giúp Test logic cốt lõi nhanh chóng mà không cần mock các thư viện DB hay chạy server.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-3xl border border-slate-200 p-6">
+                        <h3 class="font-bold text-slate-700 text-lg mb-3 flex items-center">
+                            <span class="mr-2">⚠️</span> CÂN NHẮC KHI:
+                        </h3>
+                        <p class="text-sm text-slate-600">
+                            Dự án quá nhỏ (MVP, CRUD cơ bản) hoặc có Deadline cực ngắn. Kiến trúc này yêu cầu tạo nhiều file (Interfaces, DTOs, Mappers), gây ra tính "cồng kềnh" (boilerplate) ở giai đoạn đầu.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="text-center text-slate-500 text-sm pb-8 border-t border-slate-200 pt-8">
+            <p>Kiến trúc Ports & Adapters được sáng tạo bởi Alistair Cockburn.</p>
+            <p class="mt-2 font-medium">Tôn chỉ: <b>Tách biệt các "mối bận tâm" (Separation of Concerns) để phần mềm dễ bảo trì và mở rộng.</b></p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Data content for interactive blocks
+        const archDetails = {
+            primary: {
+                title: '📱 Primary Adapters (Chủ động: Nhận tín hiệu)',
+                titleColor: 'text-amber-700',
+                bg: 'bg-amber-50',
+                border: 'border-amber-300',
+                desc: 'Thành phần <b>chủ động "lái" (Drive)</b> hệ thống. Chúng nhận thao tác từ thế giới thực (người dùng bấm nút Đặt Hàng trên Web) và chuyển thành dữ liệu truyền vào Lõi (Core).',
+                code: `// REST API Controller (Ví dụ Web nhận HTTP Request)\nclass OrderController {\n  constructor(private useCase: PlaceOrderUseCase) {} // Lấy Lõi ra xài\n\n  handlePost(req, res) {\n    // B1: Nhận JSON giỏ hàng từ Web\n    const cartItems = req.body.items;\n    // B2: Gọi chức năng Đặt Hàng trong Lõi\n    this.useCase.execute(cartItems);\n    res.send("Đặt hàng thành công!");\n  }\n}`,
+                analogy: 'Kịch bản Đặt hàng: Bạn phục vụ bàn (Controller) ghi chú order món ăn từ khách và báo lại chính xác cho Bếp trưởng (Core).'
+            },
+            port: {
+                title: '🔌 Ports (Các Cổng / Giao diện)',
+                titleColor: 'text-teal-700',
+                bg: 'bg-teal-50',
+                border: 'border-teal-300',
+                desc: 'Là các <b>Bản hợp đồng (Interfaces)</b> nằm TRONG Lõi. <br>1. <b>Cổng vào:</b> Core mở ra để bên ngoài gọi vào (VD: Giao diện `IPlaceOrderUseCase`). <br>2. <b>Cổng ra:</b> Core yêu cầu bên ngoài phải đáp ứng (VD: `IOrderRepository`).',
+                code: `// CỔNG RA (Driven Port): Lõi nói "Tôi cần ai đó lưu đơn hàng"\ninterface IOrderRepository {\n  save(orderData: any): void;\n}\n\n// Bất kỳ ai (MySQL, Mongo, API) muốn làm nhiệm vụ lưu trữ\n// đều phải ký hợp đồng tuân thủ Cổng 'save()' này.`,
+                analogy: 'Kịch bản Đặt hàng: Bếp trưởng yêu cầu "Cần một người cất đồ ăn vào kho" (Port), Bếp trưởng không quan tâm đó là kho lạnh hay tủ mát thông thường.'
+            },
+            core: {
+                title: '🧠 Application Core (Lõi Ứng Dụng: Xử lý nghiệp vụ)',
+                color: 'text-indigo-700',
+                bg: 'bg-indigo-50',
+                border: 'border-indigo-300',
+                desc: 'Trái tim của hệ thống. Chứa toàn bộ Quy tắc kinh doanh (Ví dụ: Tính tổng tiền, Kiểm tra giỏ hàng). Điểm mấu chốt: <b>Core KHÔNG chứa thư viện bên ngoài (Không SQL, Không HTTP).</b>',
+                code: `// Use Case: Kịch bản Đặt hàng (Thuần túy Logic, không có Express/React)\nclass PlaceOrderUseCase {\n  constructor(private repo: IOrderRepository) {} // Nhận Cổng lưu trữ\n\n  execute(cartItems) {\n    if(cartItems.length === 0) throw Error("Giỏ hàng trống");\n    // Xử lý logic nghiệp vụ: Tính tổng tiền\n    const total = cartItems.reduce((sum, item) => sum + item.price, 0);\n    \n    // Ra lệnh lưu dữ liệu thông qua Cổng ra\n    this.repo.save({ items: cartItems, total });\n  }\n}`,
+                analogy: 'Kịch bản Đặt hàng: Bếp trưởng (Core) kiểm tra nguyên liệu và lên món, Bếp trưởng không cần quan tâm order được ghi trên giấy hay iPad (không dính dáng UI).'
+            },
+            secondary: {
+                title: '🗄️ Secondary Adapters (Bị động: Thực thi lệnh)',
+                titleColor: 'text-amber-700',
+                bg: 'bg-amber-50',
+                border: 'border-amber-300',
+                desc: 'Thành phần <b>bị "lái" (Driven)</b> bởi hệ thống. Core gọi chúng (thông qua <b>Cổng ra</b>) để thực thi hành động với thế giới thực như: Ghi Database, Gửi SMS, Trừ tiền thẻ tín dụng.',
+                code: `// MySQL Adapter (Thực thi Cổng IOrderRepository)\nclass MySQLOrderRepository implements IOrderRepository {\n  save(orderData) {\n    // Nhận Data đã xử lý từ Lõi, dùng thư viện MySQL để lưu\n    const sql = "INSERT INTO orders (total) VALUES (?)";\n    mysql.query(sql, [orderData.total]);\n  }\n}`,
+                analogy: 'Kịch bản Đặt hàng: Nhân viên kho (Adapter) tuân lệnh Bếp trưởng mang cất nguyên liệu vào đúng tủ lạnh MySQL.'
+            }
+        };
+
+        // Handle interaction
+        function showDetails(layer) {
+            // Reset active states
+            const ids = ['btn-core', 'btn-port', 'btn-primary', 'btn-secondary'];
+            const classes = ['active-core', 'active-port', 'active-adapter', 'active-adapter'];
+            
+            ids.forEach((id, index) => {
+                document.getElementById(id).classList.remove(classes[index]);
+            });
+
+            // Set active state
+            let activeClass = 'active-adapter';
+            if(layer === 'core') activeClass = 'active-core';
+            if(layer === 'port') activeClass = 'active-port';
+            
+            document.getElementById(`btn-${layer}`).classList.add(activeClass);
+
+            // Update panel
+            const panel = document.getElementById('info-panel');
+            const data = archDetails[layer];
+            
+            panel.className = `rounded-2xl p-6 md:p-8 min-h-[180px] border transition-all duration-300 shadow-md ${data.bg} ${data.border}`;
+            
+            const textColor = data.color || data.titleColor;
+            
+            panel.innerHTML = `
+                <h3 class="text-2xl font-bold ${textColor} mb-3">${data.title}</h3>
+                <p class="text-slate-700 mb-5 leading-relaxed">${data.desc}</p>
+                <div class="bg-slate-900 text-teal-100 p-4 rounded-xl font-mono text-sm whitespace-pre overflow-x-auto mb-4 border border-slate-700 shadow-inner">${data.code}</div>
+                <div class="bg-white/60 p-3 rounded-lg border border-white">
+                    <p class="text-sm font-semibold ${textColor}">💡 ${data.analogy}</p>
+                </div>
+            `;
+        }
+
+        // Setup Radar Chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('architectureRadarChart').getContext('2d');
+            
+            // Required Tooltip config for multilines
+            const tooltipConfig = {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) return label.join(' ');
+                        return label;
+                    }
+                }
+            };
+
+            // Wrapped labels if > 16 chars
+            const labels = [
+                ['Độc lập', 'DB/Framework'], 
+                'Khả năng Test', 
+                ['Dễ bảo trì', 'dài hạn'], 
+                ['Tốc độ code', 'ban đầu'], 
+                'Độ phức tạp file'
+            ];
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ports & Adapters',
+                        data: [10, 10, 9, 3, 8],
+                        fill: true,
+                        backgroundColor: 'rgba(20, 184, 166, 0.2)', // Teal
+                        borderColor: 'rgb(20, 184, 166)',
+                        pointBackgroundColor: 'rgb(20, 184, 166)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(20, 184, 166)'
+                    }, {
+                        label: 'MVC Layered',
+                        data: [2, 5, 4, 9, 3],
+                        fill: true,
+                        backgroundColor: 'rgba(245, 158, 11, 0.2)', // Amber
+                        borderColor: 'rgb(245, 158, 11)',
+                        pointBackgroundColor: 'rgb(245, 158, 11)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(245, 158, 11)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: tooltipConfig,
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Inter', size: 12 },
+                                color: '#334155'
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.05)' },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            pointLabels: {
+                                font: { family: 'Inter', size: 11, weight: '600' },
+                                color: '#475569'
+                            },
+                            ticks: { display: false, min: 0, max: 10 }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

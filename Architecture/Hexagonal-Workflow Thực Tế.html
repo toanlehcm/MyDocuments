@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Thực Tế: Kiến Trúc Hexagonal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F1F5F9; /* Slate 100 */
+            color: #0F172A; /* Slate 900 */
+        }
+        .font-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Interactive Pipeline Steps */
+        .step-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .step-card:hover {
+            transform: translateX(5px);
+            border-color: #CBD5E1;
+        }
+        
+        /* Active States */
+        .active-client { border-color: #94A3B8; background-color: #F8FAFC; }
+        .active-layer1 { border-color: #3B82F6; background-color: #EFF6FF; } /* Blue */
+        .active-layer2 { border-color: #10B981; background-color: #ECFDF5; } /* Green */
+        .active-layer3 { border-color: #F59E0B; background-color: #FFFBEB; } /* Amber */
+
+        /* Vertical Line Connector */
+        .pipeline-connector {
+            width: 4px;
+            background: linear-gradient(to bottom, #94A3B8, #3B82F6, #10B981, #F59E0B);
+            margin-left: 24px;
+        }
+    </style>
+</head>
+<body class="antialiased pb-20">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+        
+        <header class="mb-12 text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4">Workflow Thực Tế: <span class="text-blue-600">Kiến Trúc Hexagonal</span></h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+                Quên đi các "hình lục giác" phức tạp. Hãy xem chính xác một <b>Request API</b> đi qua các Layer nào cho đến khi chạm vào <b>Database</b>.
+            </p>
+        </header>
+
+        <!-- Q&A Section -->
+        <section class="mb-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                <span class="text-2xl mr-2">❓</span> Giải đáp nhanh các câu hỏi cốt lõi:
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div class="bg-slate-50 p-4 rounded-xl">
+                    <p class="font-bold text-slate-700">1. Server sẽ tạo bao nhiêu layer?</p>
+                    <p class="text-slate-600 mt-1">Về cơ bản là <b>3 vùng chính</b>: <br>1. Layer hứ́ng Request (Controller) <br>2. Layer Core (Xử lý nghiệp vụ) <br>3. Layer Giao tiếp DB (Repository).</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl">
+                    <p class="font-bold text-slate-700">2. Layer nào tiếp xúc với DB (mysql, mongodb...)?</p>
+                    <p class="text-slate-600 mt-1">Layer thứ 3: <b>Secondary Adapter (Repository)</b>. Đây là nơi duy nhất chứa code thực thi Database như <code>foodModel.findById(id)</code>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Workflow Area -->
+        <h2 class="text-xl font-bold text-slate-800 mb-6 text-center">Nhấp vào từng bước dưới đây để xem Code và Chức năng chi tiết</h2>
+        
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- LEFT: The Pipeline -->
+            <div class="w-full lg:w-1/3 relative flex flex-col gap-0">
+                <!-- Connector Line -->
+                <div class="absolute top-10 bottom-10 left-6 w-1 bg-slate-200 z-0"></div>
+
+                <!-- Step 0: Client -->
+                <div id="step-0" class="step-card bg-white p-4 rounded-2xl shadow-sm relative z-10 mb-6" onclick="showStep(0)">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">🌐</div>
+                        <div class="ml-4">
+                            <h3 class="font-bold text-slate-800">Client (Frontend/App)</h3>
+                            <p class="text-xs text-slate-500 font-code mt-1">POST /api/orders</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-slate-400 font-bold z-10 mb-6 text-2xl">↓</div>
+
+                <!-- Step 1: Controller -->
+                <div id="step-1" class="step-card bg-white p-4 rounded-2xl shadow-sm relative z-10 mb-6" onclick="showStep(1)">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">1</div>
+                        <div class="ml-4">
+                            <h3 class="font-bold text-blue-800">Layer 1: Nhận Request</h3>
+                            <p class="text-xs text-blue-600 font-medium">Primary Adapter (Controller)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-slate-400 font-bold z-10 mb-6 text-2xl">↓</div>
+
+                <!-- Step 2: Core -->
+                <div id="step-2" class="step-card bg-white p-4 rounded-2xl shadow-sm relative z-10 mb-6 active-layer2" onclick="showStep(2)">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">2</div>
+                        <div class="ml-4">
+                            <h3 class="font-bold text-emerald-800">Layer 2: Lõi Nghiệp Vụ</h3>
+                            <p class="text-xs text-emerald-600 font-medium">Application Core (Use Case)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-slate-400 font-bold z-10 mb-6 text-2xl">↓</div>
+
+                <!-- Step 3: DB Adapter -->
+                <div id="step-3" class="step-card bg-white p-4 rounded-2xl shadow-sm relative z-10" onclick="showStep(3)">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">3</div>
+                        <div class="ml-4">
+                            <h3 class="font-bold text-amber-800">Layer 3: Chạm Database</h3>
+                            <p class="text-xs text-amber-600 font-medium">Secondary Adapter (Repository)</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT: Detailed Information Panel -->
+            <div class="w-full lg:w-2/3">
+                <div id="detail-panel" class="bg-white rounded-3xl shadow-lg border border-emerald-200 overflow-hidden h-full flex flex-col">
+                    <!-- Dynamic Header -->
+                    <div id="panel-header" class="bg-emerald-50 p-6 border-b border-emerald-100">
+                        <h2 class="text-2xl font-bold text-emerald-800">Layer 2: Lõi Nghiệp Vụ (Core)</h2>
+                        <p class="text-emerald-600 mt-2">Nơi xử lý Payload và các quy tắc kinh doanh.</p>
+                    </div>
+                    
+                    <!-- Dynamic Content -->
+                    <div class="p-6 flex-grow flex flex-col">
+                        <div id="panel-qa" class="mb-6 space-y-4 text-slate-700">
+                            <div class="flex items-start gap-2">
+                                <span class="font-bold text-emerald-700">❓ Layer này làm gì?</span>
+                                <span>Nhận payload từ Layer 1 truyền sang. Nó không quan tâm đến Web hay HTTP. Nó chỉ tập trung tính toán: Đơn hàng này có hợp lệ không? Tổng tiền là bao nhiêu?</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <span class="font-bold text-emerald-700">❓ Chuyện gì xảy ra tiếp theo?</span>
+                                <span>Sau khi xử lý xong, nó <b>không tự lưu vào DB</b>. Nó gọi một "Interface" (Bản hợp đồng) để yêu cầu: "Tôi cần lưu dữ liệu này".</span>
+                            </div>
+                        </div>
+
+                        <!-- Code Display -->
+                        <div class="bg-[#1E293B] rounded-xl overflow-hidden flex-grow shadow-inner flex flex-col">
+                            <div class="bg-slate-800 px-4 py-2 text-xs text-slate-400 font-code border-b border-slate-700 flex justify-between">
+                                <span id="code-filename">OrderUseCase.js</span>
+                                <span>JavaScript</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto text-sm text-slate-300 font-code leading-relaxed whitespace-pre" id="code-content">
+class OrderUseCase {
+  // Inject Repository (Interface) vào
+  constructor(orderRepository) {
+    this.repo = orderRepository;
+  }
+
+  execute(payload) {
+    // 1. Kiểm tra nghiệp vụ
+    if (!payload.foodId || payload.qty <= 0) {
+      throw new Error("Dữ liệu đơn hàng không hợp lệ!");
+    }
+
+    // 2. Tính toán
+    const totalAmount = payload.qty * 50000; 
+    const finalOrder = { ...payload, totalAmount };
+
+    // 3. YÊU CẦU lưu DB thông qua Interface (không dùng mongoose ở đây)
+    this.repo.save(finalOrder);
+    
+    return finalOrder;
+  }
+}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const workflowData = [
+            {
+                id: 0,
+                colorClass: 'active-client',
+                headerClass: 'bg-slate-50 border-slate-200',
+                titleColor: 'text-slate-800',
+                subtitleColor: 'text-slate-600',
+                title: 'Client (Web/App gọi API)',
+                subtitle: 'Người dùng tương tác và gửi dữ liệu lên Server.',
+                qa1: '<span class="font-bold text-slate-700">❓ Hành động:</span> Khách hàng chọn món ăn và bấm nút Đặt Hàng.',
+                qa2: '<span class="font-bold text-slate-700">❓ Dữ liệu:</span> Một HTTP Request được gửi đi mang theo Payload (thông tin món, số lượng).',
+                filename: 'Frontend (React/Vue/App)',
+                code: `// Client gửi API lên Server
+const payload = {
+  foodId: "F123",
+  qty: 2,
+  note: "Không hành"
+};
+
+await axios.post('https://api.domain.com/orders', payload);`
+            },
+            {
+                id: 1,
+                colorClass: 'active-layer1',
+                headerClass: 'bg-blue-50 border-blue-100',
+                titleColor: 'text-blue-800',
+                subtitleColor: 'text-blue-600',
+                title: 'Layer 1: Controller (Primary Adapter)',
+                subtitle: 'Lớp bảo vệ vòng ngoài. Nhận Request từ Client.',
+                qa1: '<span class="font-bold text-blue-700">❓ Layer này làm gì?</span> Hứng HTTP Request, lấy ra Payload (JSON). Nó kiểm tra xem request có đúng chuẩn không (vd: header, token).',
+                qa2: '<span class="font-bold text-blue-700">❓ Truyền payload đi đâu?</span> Nó truyền payload sạch sẽ vào <b>Layer 2 (Core)</b> để xử lý, sau đó lấy kết quả trả về cho Client (res.send). Nó KHÔNG tự viết logic tính toán.',
+                filename: 'order.controller.js',
+                code: `// Sử dụng Express.js
+app.post('/api/orders', (req, res) => {
+  try {
+    // 1. Trích xuất Payload từ Request
+    const payload = req.body;
+
+    // 2. Gọi Layer 2 (Core Use Case) và truyền payload vào
+    const result = orderUseCase.execute(payload);
+
+    // 3. Trả kết quả về cho Client
+    res.status(200).json({ message: "Thành công", data: result });
+
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});`
+            },
+            {
+                id: 2,
+                colorClass: 'active-layer2',
+                headerClass: 'bg-emerald-50 border-emerald-100',
+                titleColor: 'text-emerald-800',
+                subtitleColor: 'text-emerald-600',
+                title: 'Layer 2: Lõi Nghiệp Vụ (Application Core)',
+                subtitle: 'Nơi xử lý Payload và các quy tắc kinh doanh.',
+                qa1: '<span class="font-bold text-emerald-700">❓ Layer này làm gì?</span> Nhận payload từ Layer 1 truyền sang. Nó KHÔNG quan tâm đến Web hay HTTP. Nó chỉ tập trung tính toán: Đơn hàng này có hợp lệ không? Tổng tiền là bao nhiêu?',
+                qa2: '<span class="font-bold text-emerald-700">❓ Chuyện gì xảy ra tiếp theo?</span> Sau khi xử lý xong, nó <b>không tự chạm vào Mongoose hay SQL</b>. Nó gọi một hàm <code>save()</code> đã được quy ước trước (Interface) để yêu cầu lưu dữ liệu.',
+                filename: 'OrderUseCase.js',
+                code: `class OrderUseCase {
+  // Nhận Repository từ bên ngoài truyền vào
+  constructor(orderRepository) {
+    this.repo = orderRepository;
+  }
+
+  execute(payload) {
+    // 1. Kiểm tra nghiệp vụ
+    if (!payload.foodId || payload.qty <= 0) {
+      throw new Error("Dữ liệu đơn hàng không hợp lệ!");
+    }
+
+    // 2. Tính toán Logic
+    const totalAmount = payload.qty * 50000; 
+    const finalOrder = { ...payload, totalAmount };
+
+    // 3. YÊU CẦU LƯU DB 
+    // -> Gọi hàm save() nhưng không biết nó là MySQL hay Mongo
+    this.repo.save(finalOrder);
+    
+    return finalOrder;
+  }
+}`
+            },
+            {
+                id: 3,
+                colorClass: 'active-layer3',
+                headerClass: 'bg-amber-50 border-amber-100',
+                titleColor: 'text-amber-800',
+                subtitleColor: 'text-amber-600',
+                title: 'Layer 3: Repository (Secondary Adapter)',
+                subtitle: 'Nơi CHỨA CODE CỤ THỂ gọi vào Database.',
+                qa1: '<span class="font-bold text-amber-700">❓ Layer này làm gì?</span> Nhận lệnh <code>save()</code> từ Layer 2. Đây chính là nơi bạn sử dụng Mongoose, Sequelize, Prisma... để thực sự lưu Data.',
+                qa2: '<span class="font-bold text-amber-700">❓ Lợi ích là gì?</span> Vì Layer 2 (Core) chỉ gọi hàm <code>save()</code>, nên nếu hôm nay bạn viết file MongoDB, ngày mai bạn có thể viết file MySQL mới thế vào mà KHÔNG CẦN sửa lại logic tính toán ở Layer 2.',
+                filename: 'MongoOrderRepository.js',
+                code: `// Import thư viện Database cụ thể (Mongoose)
+const OrderModel = require('./models/OrderMongoModel');
+
+class MongoOrderRepository {
+  
+  // Hàm này đáp ứng yêu cầu của Layer 2 (Core)
+  async save(orderData) {
+    
+    // ĐÂY LÀ NƠI CHẠM VÀO DATABASE
+    const newOrder = new OrderModel({
+      foodId: orderData.foodId,
+      quantity: orderData.qty,
+      total: orderData.totalAmount
+    });
+
+    await newOrder.save(); 
+    // Hoặc nếu tìm kiếm: await foodModel.findById(orderData.foodId)
+  }
+}`
+            }
+        ];
+
+        function showStep(stepId) {
+            // Remove active classes
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('active-client', 'active-layer1', 'active-layer2', 'active-layer3', 'shadow-md');
+            });
+
+            // Add active class to selected step
+            const selectedStep = document.getElementById(`step-${stepId}`);
+            selectedStep.classList.add(workflowData[stepId].colorClass, 'shadow-md');
+
+            // Update Panel content
+            const data = workflowData[stepId];
+            
+            // Update Header styles
+            const panelHeader = document.getElementById('panel-header');
+            panelHeader.className = `p-6 border-b ${data.headerClass}`;
+            
+            panelHeader.innerHTML = `
+                <h2 class="text-2xl font-bold ${data.titleColor}">${data.title}</h2>
+                <p class="${data.subtitleColor} mt-2">${data.subtitle}</p>
+            `;
+
+            // Update Q&A
+            document.getElementById('panel-qa').innerHTML = `
+                <div class="flex items-start gap-2">${data.qa1}</div>
+                <div class="flex items-start gap-2">${data.qa2}</div>
+            `;
+
+            // Update Code
+            document.getElementById('code-filename').innerText = data.filename;
+            document.getElementById('code-content').innerText = data.code;
+            
+            // Outer Panel Border color
+            const panel = document.getElementById('detail-panel');
+            panel.className = `bg-white rounded-3xl shadow-lg border-2 overflow-hidden h-full flex flex-col transition-colors duration-300 ${data.headerClass.split(' ')[1]}`;
+        }
+
+        // Initialize with Step 2 (Core) as default
+        showStep(2);
+    </script>
+</body>
+</html>
