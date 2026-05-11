@@ -1,9 +1,7 @@
 1.cho từ loại, IPA của các từ trên là gì?
 2.nghĩa tiếng việt chính xác.
 3.hướng dẫn t giải thích bằng tiếng Anh dễ hiểu
-4.t muốn mỗi từ là 1 file md 
-có thể download về máy tính cá nhân/
-trong folder MyDocuments/SS English/phase-7/skill-7-behind-the-wheel. 
+4.t muốn mỗi từ là 1 file md trong folder MyDocuments/SS English/phase-7/skill-7-behind-the-wheel. 
 VD: Không đặt tên file là vocabulary-gambling, chỉ cần đặt tên file là Gambling.md
 5.Format các câu vd khi giải thích nên có 3 versions:
 VD Format:
@@ -28,3 +26,4 @@ VD Format:
 
 > Vietnamese version
 - có thể tham khảo file MyDocuments/SS English/phase-7/grammar-7-sensory-verbs-usage/the-red-words/Annual.md
+- có thể download về máy tính cá nhân.
