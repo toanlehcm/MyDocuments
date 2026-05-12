@@ -1,44 +1,53 @@
 # Code Reading Guide — PTE-8162: [RCM -> Invoice] Reset button working wrong
 
 ## Mục tiêu
-Hiểu file `invoicePtE.js` liên quan đến logic Quick View trong tối đa 5 phút.
+Hiểu file `invoicePtE.js` liên quan đến Quick View, API Fetching, và Render lifecycle trong tối đa 5 phút.
 
 ---
 
 ## FILE: `Client/app/scripts/controllers/insurance/invoicePtE.js`
 
 ### 🗺️ Bản đồ file (tổng quan)
-- **Vai trò trong hệ thống:** Quản lý giao diện và logic của tab RCM Invoice (Hóa đơn bảo hiểm).
-- **Ai gọi file này?** UI Routing khi user truy cập màn hình Claims/Invoices.
-- **Tổng số dòng:** ~4500 dòng (file cực lớn).
+- **Vai trò trong hệ thống:** Bàn điều khiển trung tâm (Dashboard) quản lý tab RCM Invoice, Filter panel và Data Table Rendering.
+- **Tác nhân kích hoạt:** Router loading page -> $onInit -> _getInvoices().
+- **Tổng số dòng:** ~4500 dòng.
 
-### 🏗️ Cấu trúc cấp cao (View Management Section)
-- `_renderViewToPanelFilter()`: Vẽ dữ liệu view lên panel bên phải.
-- `_processSelectQuickView()`: Xử lý khi user chọn một view từ list.
-- `_saveView()`: Lưu cấu hình view hiện tại (Filters + Columns) xuống DB.
-- `_resetView()`: Khôi phục trạng thái view ban đầu.
-- `_getView()`: (New) Fetch chi tiết một view từ server.
+### 🏗️ Cấu trúc cấp cao (Section Key Flows)
+- `_resetView()` & `_saveView()`: Xử lý State Management/Persistence layer.
+- `_getInvoices()`: Xử lý Data Access & View Update. Nơi bug Phase 2 cư ngụ.
+- DOM Event Section: Nơi trigger resize window events.
 
 ### 🔍 Điểm bug nằm ở đâu?
-- **Function liên quan:** `_resetView()` và `_saveView()`.
-- **Logic trước khi fix:** `_resetView` dùng biến `oldView` (local variable) để render lại panel. Biến này bị cũ sau khi Save.
-- **Logic sau khi fix:** `_resetView` gọi API `_getView` để lấy data mới nhất, sau đó truyền vào `_processSelectQuickView(oldView.view, res)`.
+- **Location 1: Closure Vars (Line ~395)**
+  - `let cacheHeaderColumnVisible; let cachePageSize;` -> Dùng lưu vết trạng thái cũ để comparison.
+- **Location 2: `_getInvoices()` logic (Line ~1450)**
+  - Trước đây: Dựa vào outer flag, timer native legacy.
+  - Sau fix: Explicit cache check, comparison string mapping `Key` array, dynamic `$timeout` trigger event.
+  - Dùng `.finally()` wrap spinner toggle & safety digest.
 
-### 📖 Chiến lược đọc file lớn nhanh (>4000 dòng)
-1. **Tìm từ khóa**: Đừng đọc từ đầu. Ctrl+F tìm `quickView` hoặc `searchTerms` để khoanh vùng logic bộ lọc.
-2. **Tìm Entry Points**: Các function `$scope.xxx = _xxx` ở đầu file là nơi UI trigger vào.
-3. **Trace Workflow**: Đi từ `_saveView` -> xem nó update cái gì -> `_resetView` -> xem nó revert cái gì.
+### 📖 Chiến lược đọc logic Rendering Flow
+1. **Kiểm tra đầu vào**: Hàm `_getInvoices` nhận param `pageSize`, `pageIndex`, và `calculateTableSize`.
+2. **Kiểm tra Data parsing**: Hàm `_parseDataForView` convert JSON server thành view models (link, formatting).
+3. **Kiểm tra UI Post-process**: Tìm `#region 8162` (hoặc cụm cache check), đây là nơi quyết định xem grid table có cần "reflow" lại hay không sau khi data được nạp.
 
 ### ⚠️ Những chỗ dễ gây confused trong file này
-- Biến `oldView`: Là một object dùng để lưu tạm trạng thái trước khi edit. Nó được định nghĩa ở cấp controller scope nên rất dễ bị stale nếu không cẩn thận.
-- Logic sync giữa `quickViewList` (danh sách view) và `searchTerms` (dữ liệu đang hiển thị trên panel).
+- Sự khác biệt giữa `calculateTableSize` (được truyền từ caller qua prop) và `isChangeDisplayColumns` (được tự detect thông qua cache comparisons). Cả hai đều có quyền trigger `change-number-of-column`.
+- Logic callback timing: AngularJS render grid theo batch, nên DOM Event phải được schedule qua `$timeout` để đợi render hoàn tất mới resize chính xác.
 
-### 🧭 Workflow trong file (dùng bug này làm ví dụ)
+### 🧭 Workflow trong file
 ```
-User Click Save → _saveView() → API Update → local view object updated
-                                                  ↓ (Reset action)
-User Click Reset → _resetView() → _getView() API → _processSelectQuickView(view, freshData) → UI Render
+User Action (Apply/Reset)
+      ↓
+_getInvoices() calls API
+      ↓
+Promise Resolution -> Save result to Scope -> Trigger Data parsing
+      ↓
+Cache Check Logic (Is Dirty?) -> Setup $timeout delay based on PageSize
+      ↓
+Promise finally() -> Disable Spinner -> common.applyChanges() (Apply data to DOM)
+      ↓
+(Timeout fires after digest) -> window.dispatchEvent('resize' / 'change-number-of-column') -> Browser reflows table structure
 ```
 
 ### 💡 Mental model để nhớ file này
-"File này như một 'bàn điều khiển' (Dashboard) — nó nhận các thiết lập filter của user, gửi đi search, và quản lý việc lưu/phục hồi các thiết lập đó."
+"Hãy hình dung file này là một đạo diễn rạp xiếc. `_getInvoices` nạp đạo cụ (data), layout stage. Nhưng nó cần một chiếc đồng hồ bấm giờ (`$timeout`) để đảm bảo các tấm rèm sân khấu được kéo lên (resize event) CHÍNH XÁC khi các đạo cụ đã đặt xong chỗ, nếu sớm quá sẽ đập vào đầu diễn viên."

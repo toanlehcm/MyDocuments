@@ -12,33 +12,44 @@
 - **Status:** Done
 - **Reporter:** Daniel Toan Le
 - **Assignee:** Daniel Toan Le
-- **Date fixed:** 2026-05-07
+- **Date fully fixed:** 2026-05-12 (Including UI Reflow fixes)
 
 ---
 
 ## 🐛 STEPS TO REPRODUCE
-1. Open RCM -> Invoice tab.
-2. Select a Quick View.
-3. Remove a column (e.g., `DOS`) and click **Save**.
-4. Modify the view again (e.g., add column X) to make `isEdited = true` (Reset button appears).
-5. Click **Reset**.
 
-**Expected:** The view reverts to the last saved state (without `DOS`).
-**Actual:** The `DOS` column reappears because the Reset button used stale data.
+### Part 1: State Sync Bug
+1. Mở tab RCM -> Invoice.
+2. Chọn một Quick View, bỏ chọn 1 cột (ví dụ `DOS`) -> Click **Save**.
+3. Modify tiếp (làm hiện nút Reset) -> Click **Reset**.
+**Expected:** Trả về state đã lưu (không có `DOS`).
+**Actual:** Cột `DOS` bất ngờ hiện lại (do cache closure cũ).
+
+### Part 2: Apply Button & UI Reflow Bug
+1. Mở Filter Panel. Thay đổi cột. Click **Apply**.
+**Expected:** Bảng dữ liệu tái tạo lại độ rộng các cột (reflow) vừa khít màn hình.
+**Actual:** UI layout không resize lại kịp, hoặc bảng bị vỡ/tràn vì sự kiện `change-number-of-column` không được dispatch chính xác.
 
 ---
 
 ## 🔍 ROOT CAUSE
-The bug was caused by two synchronization failures in `invoicePtE.js`:
-1. **Stale `quickViewList`**: In `_saveView()`, the local view object in the list was only updated with the `Name`, missing `Filters` and `DisplayColumns`.
-2. **Stale `oldView` Closure**: The `_resetView()` function relied on the `oldView` variable, which captured a snapshot of the view when the panel was first rendered. This snapshot was not refreshed after a successful save.
+Bug bao gồm hai tầng nguyên nhân logic và rendering:
+1. **Stale Closures:** `_resetView()` dùng snapshot lưu tạm thay vì fetch fresh data API.
+2. **Race Conditions in Digest Cycle:** Dùng watcher ngoài controller để set flag column changed, khiến controller chạy query không biết data thay đổi. Dùng `setTimeout` native nằm ngoài luồng kiểm soát của AngularJS, dẫn đến dispatch DOM resize event bị sai lệch timing so với chu trình re-render của bảng.
 
 ---
 
 ## ✅ SOLUTION
-1. **Data Sync in `_saveView`**: Updated the function to map `Filters` and `DisplayColumns` from the server response into the local `quickViewList` entry.
-2. **API-driven Reset**: Refactored `_resetView` to fetch the latest view details from the server using a new helper `_getView(viewId)` instead of relying on the local `oldView` snapshot.
-3. **Enhanced UI Processing**: Updated `_processSelectQuickView` to accept an optional `viewData` parameter, allowing the UI to render from fresh server data bypass the local list.
+
+### Phase 1: Data Persistence (2026-05-07)
+- Refactor `_resetView` gọi helper function mới `_getView(viewId)` để fetch trực tiếp từ API backend thay vì rely vào snapshot `oldView`.
+- Sync proper data structures mapping back into `quickViewList` sau khi lưu.
+
+### Phase 2: Frontend UI Reflow (2026-05-12)
+- **Cache comparison algorithm:** Tích hợp 2 closure vars mới `cacheHeaderColumnVisible` và `cachePageSize`. Trong handler `_getInvoices`, map array keys của cache vs scope hiện tại để chủ động phát hiện thay đổi cột, ko qua watcher trung gian.
+- **Framework Timing migration:** Đổi `setTimeout` -> `$timeout`.
+- **Dynamic Latency scale:** Tự động tính delay timing (300ms / 700ms / 1000ms) tùy thuộc vào `pageSize` (10 / 20 / 50), để Browser có đủ thời gian vẽ DOM khối lượng lớn trước khi trigger Resize Event.
+- **Lifecycle Resilience:** Di chuyển code tắt spinner vào block `.finally()`, kết hợp invoke `common.applyChanges($scope)` để trigger cycle an toàn và triệt để.
 
 ---
 
@@ -46,44 +57,70 @@ The bug was caused by two synchronization failures in `invoicePtE.js`:
 
 | File | Đường dẫn đầy đủ | Vai trò | Thay đổi gì |
 |------|------------------|---------|-------------|
-| invoicePtE.js | `Client/app/scripts/controllers/insurance/invoicePtE.js` | Controller | Refactored `_resetView`, added `_getView`, updated `_processSelectQuickView` and `_saveView` |
+| invoicePtE.js | `Client/app/scripts/controllers/insurance/invoicePtE.js` | Controller | 1. Refactored reset view to query API. 2. Injected cache-comparison logic in `_getInvoices`. 3. Migrated timers to `$timeout`. 4. Integrated safe digest. |
 
-### Chi tiết từng file:
+### Chi tiết code thay đổi (Phase 2 highlights):
 
-#### invoicePtE.js
-- **Function bị ảnh hưởng:** 
-    - `_saveView()`: Added sync for `Filters` and `DisplayColumns`.
-    - `_resetView()`: Changed from using `oldView` to using `_getView()` API.
-    - `_processSelectQuickView(view, viewData)`: Added `viewData` param to prioritize server data.
-    - `_getView(viewId)`: New helper function to call `v4GetCustomViewDetail`.
+#### invoicePtE.js (Closure)
+```javascript
+let isChangeDisplayColumns = false;
+let cacheHeaderColumnVisible;
+let cachePageSize;
+```
+
+#### invoicePtE.js (`_getInvoices`)
+```javascript
+// Comparison Logic
+let isChangeDisplayColumns = false;
+const columnBefore = (cacheHeaderColumnVisible || []).map(i => i.Key).join('');
+const columnAfter = ($scope.invoiceTable.headerDisplayColumns || []).map(i => i.Key).join('');
+if (columnBefore !== columnAfter) isChangeDisplayColumns = true;
+if (String(cachePageSize) != String(pageSize)) isChangeDisplayColumns = true;
+
+// Dynamic Timers
+if (calculateTableSize || isChangeDisplayColumns) {
+  $timeout(() => { window.dispatchEvent(new Event("change-number-of-column")); },
+  pageSize == 50 ? 1000 : pageSize == 20 ? 700 : 300);
+}
+
+// Safe Cleanup
+.finally(() => {
+  $scope.getInvoiceSpinnerLoading = false;
+  common.applyChanges($scope);
+});
+```
 
 ---
 
 ## 📁 FILES LIÊN QUAN (Related Files)
 
-| File | Đường dẫn | Vai trò trong workflow | Lý do liên quan |
-|------|-----------|------------------------|-----------------|
-| insuranceClaimManagementATP.js | `Client/app/scripts/controllers/insuranceSettingModule/insuranceClaimManagementATP.js` | Reference Controller | Served as the standard pattern for view management and reset logic. |
+| File | Đường dẫn | Lý do liên quan |
+|------|-----------|-----------------|
+| insuranceClaimManagementATP.js | `.../insuranceClaimManagementATP.js` | Controller mẫu có code chuẩn về cache comparison và dynamic timer logic. |
+| common.js | `.../common.js` | Cung cấp global definition cho `common.applyChanges($scope)` check phase. |
 
 ---
 
-## 🧭 WORKFLOW
+## 🧭 WORKFLOW (Unified)
 
 ```
-User Action (Save) → _saveView() → API Call → Update quickViewList (Fixed)
-                                    ↓
-User Action (Reset) → _resetView() → _getView() API (Fixed) → _processSelectQuickView(view, res)
+Apply/Reset Triggered 
+     ↓
+Call _getInvoices() -> Fetch API Server
+     ↓
+Data Returned -> Parse HTML models -> Compare Cache vs Current Head -> Set Timer Logic
+     ↓
+Run `.finally()` -> Render scope to DOM via `common.applyChanges()`
+     ↓
+Browser paints grid layout
+     ↓
+$timeout completes -> Dispatches "change-number-of-column" event
+     ↓
+Table successfully resizes gracefully with new data.
 ```
 
 ---
 
 ## ⚠️ SIDE EFFECTS & RISKS
-- Adding an extra API call on Reset introduces a slight delay (with spinner) but ensures data accuracy.
-- `_processSelectQuickView` now handles an optional second parameter, which is backward compatible with other calls.
-
----
-
-## 🔗 LIÊN KẾT
-- **Full knowledge:** `03-full-knowledge.md`
-- **Code reading guide:** `04-code-reading-guide.md`
-- **Interview prep:** `02-interview-version.md`
+- Dynamic timeout thresholds (1000ms) prevent UI jank but user might experience a 1s wait before final column expansion on massive data loads (50 items). This is deliberate for visual smoothness.
+- `common.applyChanges` will trigger an extra check on root phase, which overhead is negligible.

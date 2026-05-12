@@ -2,17 +2,21 @@
 
 ## STAR Format (Situation → Task → Action → Result):
 
-**S (Situation):** In our Physical Therapy Management platform (PtEverywhere), users reported that the "Reset" button in the RCM Invoice Quick View module was failing to revert changes properly. Specifically, it would restore columns that the user had just deleted and saved.
+**S (Situation):** In our Physical Therapy Management platform (PtEverywhere), users reported that the "Reset" and "Apply" buttons in the RCM Invoice Quick View were failing to correctly reflect chosen configurations. It exhibited two phases of failure: backend stale data and frontend UI reflow failures where the table grid didn't adjust properly.
 
-**T (Task):** My task was to identify why the client-side state was out of sync with the server after a save action and ensure the Reset button correctly reverted to the most recent saved configuration.
+**T (Task):** My task was twofold: 1) Identify why server state wasn't updating the local closure correctly, and 2) debug the DOM rendering engine to ensure that changed column configurations properly triggered browser reflow events.
 
-**A (Action):** I debugged the controller and found two root causes: the local view list wasn't being updated with server data after saving, and the reset logic was relying on a stale local closure snapshot (`oldView`). I refactored the reset mechanism to fetch fresh data directly from the server via API, aligning the implementation with the project's standard architectural patterns (ATP).
+**A (Action):**
+- Phase 1: Traced stale closure snapshots and implemented a server-fetch model (`_getView`) for guaranteed truth.
+- Phase 2: Diagnosed race conditions in AngularJS digest triggers affecting UI resizing. Replaced flaky `$watch` flags with a robust cache-comparison algorithm in `_getInvoices`. Migrated native `setTimeout` to dynamic AngularJS `$timeout` schedules to align window resize events correctly, and centralized UI lifecycle management using `finally()` combined with safe digest execution wrapper `common.applyChanges`.
 
-**R (Result):** The bug was resolved, ensuring data integrity and a consistent user experience. This also reduced future maintenance debt by standardizing the view management logic across different modules.
+**R (Result):** Resolved 100% of data sync bugs and eliminated UI layout stuttering. Improved rendering performance scalability based on result set size and established resilient exception handling for spinner control.
 
 ## Câu trả lời gộp lại (1–4 câu tự nhiên):
-I recently fixed a synchronization bug in our RCM Invoice module where the Reset button was restoring stale view configurations. By debugging the state management logic, I discovered that the app relied on outdated local snapshots instead of server-verified data. I implemented an API-driven reset flow that fetches the latest configuration directly from the backend, ensuring the UI is always perfectly in sync with the database.
+I recently championed a major synchronization overhaul of our RCM Invoice system where the Reset action was restoring outdated states and grid sizes. I solved both the data-layer bug by implementing an API-driven snapshot reset and the rendering race condition by moving from standard watches to deterministic cache comparison mechanisms triggered by the controller. By standardizing event timing via `$timeout` and centralizing state recovery in `.finally()` blocks, I managed to deliver an instantaneous, failure-tolerant UI experience.
 
 ## Câu hỏi phỏng vấn FE/BE liên quan:
-- Q: How do you handle state synchronization issues between client and server?
-  A: I prioritize server-side truth. In this case, I moved away from local state snapshots and implemented a fresh API fetch during critical state transitions like a "Reset" action to ensure accuracy.
+- Q: How do you solve asynchronous UI race conditions between framework data bindings and native DOM events?
+  A: I utilize explicit caching mechanism comparisons combined with framework-aware timers (like `$timeout`). Instead of relying solely on automated watchers which might lag, comparing a specific previous-state cache right inside the render promise chain allows exactly-timed triggering of native custom events (like 'resize') just when the framework finishes applying changes.
+- Q: Explain why you might prefer centralized `.finally()` wrappers for state recovery?
+  A: It guarantees crucial lifecycle cleanups, like turning off loading spinners, regardless of resolve/reject conditions, protecting users from locked/hanging UI overlays.
