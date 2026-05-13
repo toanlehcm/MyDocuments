@@ -1,6 +1,6 @@
 # Conversely
 * **Từ loại:** Adverb
-* **IPA:** /kənˈvɜːrsli/
+* **IPA:** /ˈkɑːnvɜːrsli/
 * **Nghĩa tiếng Việt:** Ngược lại.
 
 **1. Cách giải thích đơn giản nhất (Dành cho giao tiếp hàng ngày)**
