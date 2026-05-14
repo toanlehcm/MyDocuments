@@ -1,28 +1,5 @@
 'use strict';
 
-// PTE-9503: Detect if browser auto-applies EXIF orientation (Chrome 81+, Safari 13.4+)
-// Uses a tiny 2x1 JPEG with EXIF orientation=6. If browser auto-rotates, naturalWidth becomes 1.
-var _browserAutoRotates = null;
-function detectBrowserAutoRotation(callback) {
-  if (_browserAutoRotates !== null) {
-    return callback(_browserAutoRotates);
-  }
-  var testImageSrc = 'data:image/jpeg;base64,/9j/4QBiRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAYAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAAITAAMAAAABAAEAAAAAAAAAAABIAAAAAQAAAEgAAAAB/9sAQwACAQECAQECAgICAgICAgMFAwMDAwMGBAQDBQcGBwcHBgcHCAkLCQgICggHBwoNCgoLDAwMDAcJDg8NDA4LDAwM/9sAQwECAgIDAwMGAwMGDAgHCAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwM/8AAEQgAAQACAwERAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/AP3+oA//2Q==';
-  var img = new Image();
-  img.onload = function() {
-    // Raw image is 2x1 with EXIF orientation=6 (rotate 90° CW)
-    // If browser auto-rotates: naturalWidth=1, naturalHeight=2
-    _browserAutoRotates = (img.naturalWidth === 1 && img.naturalHeight === 2);
-    console.log('[imageFactory] Browser auto-rotates EXIF:', _browserAutoRotates);
-    callback(_browserAutoRotates);
-  };
-  img.onerror = function() {
-    _browserAutoRotates = false;
-    callback(false);
-  };
-  img.src = testImageSrc;
-}
-
 angular.module('imageFactory', [])
     .factory('imageFactory', function($sce) {
         return {
@@ -55,14 +32,11 @@ angular.module('imageFactory', [])
               reader.readAsArrayBuffer(file);
               //reader.readAsDataURL(file);
             },
-            resetOrientation: function(srcBase64, srcOrientation, resolutionLimit, callback, sizeLimit) {
-              sizeLimit = sizeLimit || null;
-              // PTE-9503: Detect browser auto-rotation before processing
-              detectBrowserAutoRotation(function(autoRotates) {
-                // If browser already auto-applied EXIF orientation, skip manual transform
-                var effectiveOrientation = (autoRotates && srcOrientation > 0) ? 1 : srcOrientation;
-                console.log('[resetOrientation] srcOrientation:', srcOrientation, 'effectiveOrientation:', effectiveOrientation, 'browserAutoRotates:', autoRotates);
-
+            resetOrientation: function(srcBase64, srcOrientation, resolutionLimit, callback, sizeLimit = null){
+              // if(srcOrientation <= 0 && !resolutionLimit){
+              //   callback(srcBase64);
+              //   return;
+              // }
               var reader = new FileReader();
               reader.onload = function(e) {
                   delete reader.onload;
@@ -75,8 +49,26 @@ angular.module('imageFactory', [])
                         canvas = document.createElement('canvas'),
                         ctx = canvas.getContext("2d");
 
+                    // PTE-9503 Solution A: Dimension-based browser auto-rotation detection
+                    // EXIF orientations 5-8 involve 90°/270° rotation (width/height swap)
+                    // Raw sensor data from camera is always landscape (width > height)
+                    // If after img.onload the image is already portrait (height > width),
+                    // it means browser already auto-applied EXIF rotation → skip manual transform
+                    var browserAlreadyRotated = false;
+                    if (srcOrientation >= 5 && srcOrientation <= 8) {
+                      browserAlreadyRotated = (height > width);
+                      // console.log('[resetOrientation] srcOrientation:', srcOrientation, 
+                      //   'browserAlreadyRotated*',browserAlreadyRotated);
+
+                    }
+                    var orientationForTransform = browserAlreadyRotated ? 1 : srcOrientation;
+                    // console.log('[resetOrientation] srcOrientation:', srcOrientation, 
+                    //   'orientationForTransform:', orientationForTransform, 
+                    //   'browserAlreadyRotated:', browserAlreadyRotated, 
+                    //   'img.width:', width, 'img.height:', height);
+
                     // set proper canvas dimensions before transform & export
-                    if (4 < effectiveOrientation && effectiveOrientation < 9) {
+                    if (4 < orientationForTransform && orientationForTransform < 9) {
                       canvas.width = height;
                       canvas.height = width;
                     } else {
@@ -84,10 +76,8 @@ angular.module('imageFactory', [])
                       canvas.height = height;
                     }
 
-                    console.log('[resetOrientation] effectiveOrientation:', effectiveOrientation, 'img.width:', width, 'img.height:', height);
-
                     // transform context before drawing image
-                    switch (effectiveOrientation) {
+                    switch (orientationForTransform) {
                       case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
                       case 3: ctx.transform(-1, 0, 0, -1, width, height ); break;
                       case 4: ctx.transform(1, 0, 0, -1, 0, height ); break;
@@ -142,12 +132,11 @@ angular.module('imageFactory', [])
                       }
                     }
                     convertImageToBlob();
-                    
-                }
-                img.src = e.target.result; 
+
+                  }
+                  img.src = e.target.result; 
               }
               reader.readAsDataURL(srcBase64);
-              });
             },
 
             resetDeviceOrientation: function(srcBase64, srcOrientation, localStorage, callback, sizeLimit = null){
