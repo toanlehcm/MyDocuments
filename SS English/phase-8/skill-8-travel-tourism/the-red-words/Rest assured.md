@@ -4,6 +4,10 @@
 * **Nghĩa tiếng Việt:** Hãy yên tâm, tin chắc rằng.
 
 **1. Cách giải thích đơn giản nhất (Dành cho giao tiếp hàng ngày)**
+> used to emphasize that what you say is true or will definitely happen
+> /juːzd tu ˈɛmfəsaɪz ðæt wʌt ju seɪ ɪz truː ɔːr wɪl ˈdɛfənətli ˈhæpən/
+> Dùng để nhấn mạnh điều bạn nói là đúng hoặc chắc chắn sẽ xảy ra
+
 > To be certain that something will happen or is true, so you don't need to worry.
 > /tu biː ˈsɜːrtn ðæt ˈsʌmθɪŋ wɪl ˈhæpən ɔːr ɪz truː, soʊ ju doʊnt niːd tu ˈwɜːri/
 > Chắc chắn rằng điều gì đó sẽ xảy ra hoặc là đúng, vì vậy bạn không cần phải lo lắng.
@@ -14,6 +18,10 @@
 > Một cách lịch sự để nói với ai đó rằng họ có thể tự tin và chắc chắn về một tình huống hoặc một lời hứa.
 
 **3. Đưa ra ví dụ thực tế (Cách tốt nhất để người nghe hiểu ngay)**
+> You may rest assured that we will do all we can to find him.
+> /ju meɪ rest əˈʃʊrd ðæt wi wɪl du ɔːl wi kæn tu faɪnd hɪm/
+> Bạn có thể yên tâm rằng chúng tôi sẽ làm hết sức mình để tìm thấy anh ấy.
+
 > Rest assured that your luggage will be delivered to your room shortly.
 > /rest əˈʃʊrd ðæt jər ˈlʌɡɪdʒ wɪl bi dɪˈlɪvərd tu jər ruːm ˈʃɔːrtli/
 > Hãy yên tâm rằng hành lý của bạn sẽ được chuyển đến phòng sớm thôi.
