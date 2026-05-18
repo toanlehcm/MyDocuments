@@ -28,15 +28,15 @@ Trình độ **Intermediate 1** (Trung cấp 1) thường tương đương với
 
 * **Ngày 1: Nạp đạn (Vocabulary & Comprehension)**
   - [x] Đọc kỹ lại 4 đoạn hội thoại trong file tài liệu.
-  - [] Ôn lại phát âm (IPA) và nghĩa của các từ đỏ & cam (dựa vào 15 file .md đã tạo).
+  - [x] Ôn lại phát âm (IPA) và nghĩa của các từ đỏ & cam (dựa vào 15 file .md đã tạo).
   - *Đánh giá:* Đọc to các từ vựng không bị vấp, hiểu rõ bối cảnh dùng từ trong các đoạn hội thoại mẫu.
 
 * **Ngày 2: Nhại giọng (Shadowing & Intonation)**
-  - Chọn 2 đoạn hội thoại (VD: Conversation 3 & 4) để tập đọc to. Nhấn nhá đúng chỗ (ví dụ: nhấn vào các từ chỉ cảm xúc, từ vựng chính như *budget constraints, off-peak, memorable*).
+  - [x] Chọn 2 đoạn hội thoại (VD: Conversation 3 & 4) để tập đọc to. Nhấn nhá đúng chỗ (ví dụ: nhấn vào các từ chỉ cảm xúc, từ vựng chính như *budget constraints, off-peak, memorable*).
   - *Đánh giá:* Ghi âm giọng đọc, nghe lại xem ngữ điệu có tự nhiên, thể hiện sự chuyên nghiệp của Travel Agent hay không.
 
 * **Ngày 3: Phản xạ với "Red Words"**
-  - Che phần dịch nghĩa tiếng Việt đi, nhìn từ màu đỏ và tự giải thích lại bằng tiếng Anh đơn giản.
+  - [x] Che phần dịch nghĩa tiếng Việt đi, nhìn từ màu đỏ và tự giải thích lại bằng tiếng Anh đơn giản.
   - Tập đặt 1-2 câu của riêng bạn với mỗi từ đỏ liên quan đến kế hoạch du lịch cá nhân.
   - *Đánh giá:* Tự giải thích được 15 từ đỏ bằng tiếng Anh mà không cần nhìn tài liệu.
 
