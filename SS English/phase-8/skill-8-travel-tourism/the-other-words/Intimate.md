@@ -1,6 +1,6 @@
 # Intimate
 * **Từ loại:** Adjective
-* **IPA:** /ˈsub/ɪn.tɪ.mət/
+* **IPA:** /ˈɪn.tɪ.mət/
 * **Nghĩa tiếng Việt:** Ấm cúng, thân mật, mang tính riêng tư sâu sắc.
 
 **1. Cách giải thích đơn giản nhất (Dành cho giao tiếp hàng ngày)**
